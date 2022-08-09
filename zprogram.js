@@ -41,12 +41,21 @@ export async function main(ns) {
                 bestinstances = CalcPercentInstances(1);
             if (
                 bestserver <= (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
-                    (bestweakentime * (21 / 16)) &&
+                (bestweakentime * (21 / 16)) &&
                 ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverarray[i])
             ) {
                 var bestserver = (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
-                        (bestweakentime * (21 / 16)),
+                    (bestweakentime * (21 / 16)),
                     target = serverarray[i];
+                ns.tprint(
+                    "target: ", target,
+                    "  bestserver: ", bestserver,
+                    "  percent: ", percent,
+                    "  besthackchance: ", besthackchance,
+                    "  ns.getServerMaxMoney(serverarray[i]): ", ns.getServerMaxMoney(serverarray[i]),
+                    "  bestinstances: ", bestinstances,
+                    "  bestweakentime * (21 / 16): ", bestweakentime * (21 / 16),
+                );
             }
         }
         ns.print("Most profitable target identified: ", target);
@@ -106,12 +115,12 @@ export async function main(ns) {
                     bestinstances = CalcPercentInstances(1);
                 if (
                     bestserver <= (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
-                        (bestweakentime * (21 / 16)) &&
+                    (bestweakentime * (21 / 16)) &&
                     ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverarray[i]) &&
                     ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExe(serverarray[i])
                 ) {
                     var bestserver = percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) *
-                            bestinstances / (bestweakentime * (21 / 16)),
+                        bestinstances / (bestweakentime * (21 / 16)),
                         target = serverarray[i];
                 }
             }
@@ -523,7 +532,11 @@ export async function main(ns) {
         if (whatinstances == 0) {
             return percentp;
         } else if (whatinstances == 1) {
-            return instances2;
+            if (percent <= 0.01) {
+                return instances2;
+            } else {
+                return instances2 - 1;
+            }
         }
     }
 
