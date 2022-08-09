@@ -47,15 +47,6 @@ export async function main(ns) {
                 var bestserver = (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
                     (bestweakentime * (21 / 16)),
                     target = serverarray[i];
-                ns.tprint(
-                    "target: ", target,
-                    "  bestserver: ", bestserver,
-                    "  percent: ", percent,
-                    "  besthackchance: ", besthackchance,
-                    "  ns.getServerMaxMoney(serverarray[i]): ", ns.getServerMaxMoney(serverarray[i]),
-                    "  bestinstances: ", bestinstances,
-                    "  bestweakentime * (21 / 16): ", bestweakentime * (21 / 16),
-                );
             }
         }
         ns.print("Most profitable target identified: ", target);
