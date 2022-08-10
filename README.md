@@ -78,11 +78,11 @@ I had designed my script to keep it prepped by the end of the script chain every
     
 .    
 
+```
+/** @param {NS} ns **/
+export async function main(ns) {
 
-
-    export async function main(ns) {
-
-    1.)
+1.)
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
     const unitime = 10; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
@@ -95,7 +95,7 @@ I had designed my script to keep it prepped by the end of the script chain every
     ns.tail();
     ZprogramIntro();
 
-    2.)
+2.)
     if (ns.args[1] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
         var purchasedservers = ns.getPurchasedServers(),
             purchasedarray = purchasedservers.length,
@@ -113,7 +113,7 @@ I had designed my script to keep it prepped by the end of the script chain every
         var host = ns.args[1];
     }
 
-    3.)
+3.)
     if (ns.args[0] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
         var serverarray = TargetsList(),
             arraylength = serverarray.length,
@@ -139,7 +139,7 @@ I had designed my script to keep it prepped by the end of the script chain every
         var target = ns.args[0];
     }
 
-    4.)
+4.)
     if (ns.hasRootAccess(target) == true) {
         ns.print("Root access to ", target, " has been verified.");
     } else {
@@ -227,34 +227,34 @@ I had designed my script to keep it prepped by the end of the script chain every
         await ns.sleep(100);
     }
 
-    5.)
+5.)
     var growonce = `/** @param {NS} ns */
-    export async function main(ns) {
+export async function main(ns) {
     await ns.grow(ns.args[0]);
-    }`;
+}`;
     await ns.write("growonce.js", growonce, "w");
     var weakenonce = `/** @param {NS} ns */
-    export async function main(ns) {
+export async function main(ns) {
     await ns.weaken(ns.args[0]);
-    }`;
+}`;
     await ns.write("weakenonce.js", weakenonce, "w");
     var zhack = `/** @param {NS} ns */
-    export async function main(ns) {
+export async function main(ns) {
     await ns.sleep(ns.args[1]);
     await ns.hack(ns.args[0]);
-    }`;
+}`;
     await ns.write("zhack.js", zhack, "w");
     var zgrow = `/** @param {NS} ns */
-    export async function main(ns) {
+export async function main(ns) {
     await ns.sleep(ns.args[1]);
     await ns.grow(ns.args[0]);
-    }`;
+}`;
     await ns.write("zgrow.js", zgrow, "w");
     var zweaken = `/** @param {NS} ns */
-    export async function main(ns) {
+export async function main(ns) {
     await ns.sleep(0);
     await ns.weaken(ns.args[0]);
-    }`;
+}`;
     await ns.write("zweaken.js", zweaken, "w");
     var zfiles = [
         "growonce.js",
@@ -266,7 +266,7 @@ I had designed my script to keep it prepped by the end of the script chain every
     await ns.scp(zfiles, "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
-    6.)
+6.)
     while (true) {
         ns.print("Verifying that target server is prepped...");
         do {
@@ -326,7 +326,7 @@ I had designed my script to keep it prepped by the end of the script chain every
             }
         } while (seclvl > minSeclvl || maxMoney > currentMoney)
 
-    7.)
+7.)
         var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host),
             wtime = ns.getWeakenTime(target),
             htime = ns.getHackTime(target),
@@ -334,7 +334,7 @@ I had designed my script to keep it prepped by the end of the script chain every
             sleep1 = wtime - htime,
             sleep2 = wtime - gtime;
 
-    8.)
+8.)
         for (var i = 1; i < 100; i++) {
             var percent = i / 100,
                 rawHThreads = ns.hackAnalyzeThreads(target, ns.getServerMaxMoney(target) * percent),
@@ -389,7 +389,7 @@ I had designed my script to keep it prepped by the end of the script chain every
         }
         ns.print("Hacking ", target, " at ", Math.round(percent * 10000000) / 100000, "% money per packet.");
 
-    9.)
+9.)
         if (instanceTime16 > unitime && instances < maxinstances) {
             var instances2 = instances,
                 timeBetweenInstances = instanceTime16;
@@ -413,7 +413,7 @@ I had designed my script to keep it prepped by the end of the script chain every
         }
         ns.print("Time between each script: ", Math.round(timeBetweenInstances * 1000) / 1000, "ms.");
 
-    10.)
+10.)
         ns.print("Now initializing hack/grow/weaken chain. This process will take ",
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds.");
         if (percent <= 0.01) {
@@ -443,7 +443,7 @@ I had designed my script to keep it prepped by the end of the script chain every
             " seconds and will finish in ", Math.round(wtime) / 1000, " seconds.");
         await ns.sleep(wtime * 1.015);
 
-    11.)
+11.)
         ns.print("Cycle complete. Renewing script chain...");
         ns.print(" ");
         if (ns.args[0] == null && ns.args[1] == null) {
@@ -465,8 +465,8 @@ I had designed my script to keep it prepped by the end of the script chain every
     }
 
 
-    12.)
-
+12.)
+    
     1.))
     function TotalPortsExe(target) {
         if (ns.fileExists("BruteSSH.exe", "home")) {
@@ -734,7 +734,7 @@ I had designed my script to keep it prepped by the end of the script chain every
             "The-Cave",
         ];
     }
-
+    
     7.))
     function ZprogramIntro() {
         return ns.print("Now running Zprogram by u/DryFacade"),
@@ -746,4 +746,5 @@ I had designed my script to keep it prepped by the end of the script chain every
             ),
             ns.print(" ");
     }
-    }
+}
+```
