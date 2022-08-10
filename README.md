@@ -1,7 +1,8 @@
 # Bitburner-Zprogram-Script
 Zprogram by u/DryFacade
 
-Instructions for how to use this script:
+
+Instructions for how to use this script: 
 you can name the script whatever, but in this case I'll use zprogram.js. Running the script only takes at most 2 arguments, and it's very simple.
 
 typing in "run zprogram.js" into the terminal and nothing else will run the script based on the best target to hack, and the best server to host the script.
@@ -13,34 +14,58 @@ typing in "run zprogram.js [target_name_here] best" into the terminal will run t
 typing in "run zprogram.js [target_name_here] [server_name_here]" into the terminal will run the script based on the target AND server defined.
 
 
+
 The methodology for how this script runs is as follows (in chronological order), and each block is also numbered in the copy of the script below:
 
+
 1.) Determines a few constants and displays info in the log.
+
 2.) Determines the best server to host the script, unless a server is specifically defined as the second argument when starting zprogram.
+
 3.) Determines the most profitable server to hack possible at the time of initialization, unless defined otherwise as the first argument when starting zprogram.
+
 4.) Verifies that the most profitable server has root access, and will gain it if it does not.
-    4.5) If the necessary port openers aren't yet downloaded/created, then the next best server which CAN be hacked into will be selected instead.
+
+4.5) If the necessary port openers aren't yet downloaded/created, then the next best server which CAN be hacked into will be selected instead.
+    
 5.) Important files are created, such as the ones that will run hack(), grow(), and weaken(), and will then be sent to the host server via the "scp" command.
+
 6.) Server security must be at minimum as well as server money at maximum in order to continue from this point. This part of the script will efficiently run the necessary threaded grow() and weaken() scripts (in a loop if needed) until both of these conditions are met. There are 6 different protocols that are designed to fit the specific condition that a server can be in. For example, protocol 1 will be used if the host server has sufficient RAM to prep the target in one fell swoop. Protocol 3 will be used if there is only enough RAM to run weaken threads but not grow threads. security will always be higher priority than growth.
+
 7.) a few variables are defined (or re-defined) in preparation for the following blocks.
+
 8.) This block primarily determines the most profitable percentage to hack the target's money for. For example, if it's found that 15% of the server's money is the most profitable percentage to hack, and if one thread of hack() steals 0.5% of the target's money, 30 hack() threads will be run per packet. Other important variables will also be determined by this block, such as the number of packets to be run per cycle, and how much time to place between each script execution.
+
 9.) This block is to set limitations. Sometimes when using massive host servers, the number of packets per cycle exceeds the constant "maxinstances", and other times the time between scripts is lower than the constant "unitime", or sometimes both. This part of the script will set limits to the numbers found by the previous block if needed. Without this block, the script could crash or be counterintuitively inefficient in these instances. The last half of the block is intended to help improve performance if the host server has very low RAM.
+
 10.) This block now executes a hack() grow() weaken() chain using the necessary variables that have now been determined. A successive instance of hack() grow() and weaken() accounts for one packet. Many packets will be run in succession in every cycle, and each script will always have tailored-to thread counts as determined by steps 8 and 9 for maximized efficiency. Note that sometimes in my code, instances and packets are synonymous in meaning. The length of time that a hack() grow() weaken() chain will run for is equal to 3/16ths of the time it takes to weaken the target server. There is a very good reason for this number, but it's complicated and time consuming to explain. After the final link of the chain has been executed, the script now sleeps for a period equal to weaken time * 1.015.
+
 11.) Determines script's income, it's remarkably simple.
+
 12.) Functions: Some of these functions serve the purpose of creating and providing commands that are not provided by the game already, but which were necessary for the operation of my script. I dove deep into the source files to derive and customize a lot of these, and i think some of them are pretty neat.
+
     1.) Returns the amount of ports able to be opened based on which port programs you have.
+    
     2.) A customized version of hackAnalyze() which returns the same value, however with the difference that it only returns a value based on minimum security level,       and ignores the current security level. This function is used in the process of determining the most profitable server.
+    
     3.) This function is a 2-in-1. It doubles as a customized version of growthAnalyze() with similar function as the previously discussed function, and can also be       used to return the percent of money hacked per thread while having the same advantage of ignoring current security level. This function is also used in the process     of determining the most profitable server.
+    
     4.) This function is also a 2-in-1. It returns the most efficient percentage of money to hack per packet without using current security level, and returns the         ideal number of instances to run. This function is used in the process of determining the most profitable server.
+    
     5.) This function is also a 2-in-1. It returns weaken time and also returns hack chance while ignoring current security level. This function is also used in the       process of determining the most profitable server.
+    
     6.)List of all targetable servers in bitburner.
+    
     7.)Introductory message that prints into the log when called.
     
+    
 To paint a clearer picture of what this script essentially looks like in action, I'll describe a real-world example that i just ran. upon typing in the command, it determines all of the information that I mentioned and prints useful info into the log. At my level (which is 664 at the moment), it determined the-hub as the most profitable target and that "home" was the best host server, which is obvious because it has 2 PB in RAM. It then prepped the target since it seems that it's security and money wasn't where it should be, so i had to wait for that to finish. After that, the script continued and began initializing the hack() grow() weaken() script chain and printed into the log that the process will take 45.480 seconds. It then went into the waiting stage and again prints into the log how long it'll take for the start of the chain to begin maturing which was 197.081 seconds, and the end of the chain to finish maturing which was 242.561 seconds. After this, the script renews the cycle and begins again, this time skipping the server prepping because it was already prepped. At the start of the next cycle, it reports the script's income which was $8.021b / sec.
+
 
 I had designed my script to keep it prepped by the end of the script chain every time the cycle renews. Although, the script is also able to prep the target in the     case that somehow the scripts misalign, which can happen with massive host servers albeit uncommonly. If too many scripts run, the came could also crash, so           there's that. Make sure to regulate the two constants at the top of the scripts to match with performance needs, or to boost the script's performance.
     
     
+
 
 /** @param {NS} ns **/
 export async function main(ns) {
