@@ -13,8 +13,7 @@ typing in "run zprogram.js [target_name_here] best" into the terminal will run t
 
 typing in "run zprogram.js [target_name_here] [server_name_here]" into the terminal will run the script based on the target AND server defined.
 
-
-
+.
 
 The methodology for how this script runs is as follows (in chronological order), and each block is also numbered in the copy of the script below:
 
@@ -45,6 +44,8 @@ The methodology for how this script runs is as follows (in chronological order),
 
 12.) Functions: Some of these functions serve the purpose of creating and providing commands that are not provided by the game already, but which were necessary for the operation of my script. I dove deep into the source files to derive and customize a lot of these, and i think some of them are pretty neat:
 
+.
+
    1.)) Returns the amount of ports able to be opened based on which port programs you have.
     
    2.)) A customized version of hackAnalyze() which returns the same value, however with the difference that it only returns a value based on minimum security level,      and ignores the current security level. This function is used in the process of determining the most profitable server.
@@ -59,13 +60,15 @@ The methodology for how this script runs is as follows (in chronological order),
     
    7.)) Introductory message that prints into the log when called.
     
+.    
     
 To paint a clearer picture of what this script essentially looks like in action, I'll describe a real-world example that i just ran. upon typing in the command, it determines all of the information that I mentioned and prints useful info into the log. At my level (which is 664 at the moment), it determined the-hub as the most profitable target and that "home" was the best host server, which is obvious because it has 2 PB in RAM. It then prepped the target since it seems that it's security and money wasn't where it should be, so i had to wait for that to finish. After that, the script continued and began initializing the hack() grow() weaken() script chain and printed into the log that the process will take 45.480 seconds. It then went into the waiting stage and again prints into the log how long it'll take for the start of the chain to begin maturing which was 197.081 seconds, and the end of the chain to finish maturing which was 242.561 seconds. After this, the script renews the cycle and begins again, this time skipping the server prepping because it was already prepped. At the start of the next cycle, it reports the script's income which was $8.021b / sec.
 
+.
 
 I had designed my script to keep it prepped by the end of the script chain every time the cycle renews. Although, the script is also able to prep the target in the     case that somehow the scripts misalign, which can happen with massive host servers albeit uncommonly. If too many scripts run, the came could also crash, so           there's that. Make sure to regulate the two constants at the top of the scripts to match with performance needs, or to boost the script's performance.
     
-    
+.    
 
 
 
