@@ -22,11 +22,11 @@ The methodology for how this script runs is as follows (in chronological order),
 
 2.) Determines the best server to host the script, unless a server is specifically defined as the second argument when starting zprogram.
 
-3.) Determines the most profitable server to hack possible at the time of initialization, unless defined otherwise as the first argument when starting zprogram.
+3.) Determines the most profitable server to hack possible at the time of initialization, unless defined otherwise as the first argument when starting zprogram. This block has the advantage of ignoring the current security levels present in each target server candidate and only considers the minimum security level for determining profitability. This requires the use of custom functions which will later be defined.
 
 4.) Verifies that the most profitable server has root access, and will gain it if it does not.
 
-4.5) If the necessary port openers aren't yet downloaded/created, then the next best server which CAN be hacked into will be selected instead.
+--4.5) If the necessary port openers aren't yet downloaded/created, then the next best server which CAN be hacked into will be selected instead.
     
 5.) Important files are created, such as the ones that will run hack(), grow(), and weaken(), and will then be sent to the host server via the "scp" command.
 
