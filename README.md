@@ -62,7 +62,15 @@ The methodology for how this script runs is as follows (in chronological order),
     
 .    
     
-To paint a clearer picture of what this script essentially looks like in action, I'll describe a real-world example that i just ran. upon typing in the command, it determines all of the information that I mentioned and prints useful info into the log. At my level (which is 664 at the moment), it determined the-hub as the most profitable target and that "home" was the best host server, which is obvious because it has 2 PB in RAM. It then prepped the target since it seems that it's security and money wasn't where it should be, so i had to wait for that to finish. After that, the script continued and began initializing the hack() grow() weaken() script chain and printed into the log that the process will take 45.480 seconds. It then went into the waiting stage and again prints into the log how long it'll take for the start of the chain to begin maturing which was 197.081 seconds, and the end of the chain to finish maturing which was 242.561 seconds. After this, the script renews the cycle and begins again, this time skipping the server prepping because it was already prepped. At the start of the next cycle, it reports the script's income which was $8.021b / sec.
+To paint a clearer picture of what this script essentially looks like in action, I'll describe a real-world example that i just ran. upon typing in the command, it determines all of the information that I mentioned and prints useful info into the log. At my level (which is 664 at the moment), it determined the-hub as the most profitable target and that "home" was the best host server, which is obvious because it has 2 PB in RAM. It then prepped the target since it seems that it's security and money wasn't where it should be, so i had to wait for that to finish. After that, the script printed the following info:
+
+Hacking the-hub at 50% money per packet.
+
+Total scripts to be run: 4532 (1510 packets).
+
+Time between each script: 10.019ms.
+
+It then continued and began initializing the hack() grow() weaken() script chain and printed into the log that the process will take 45.480 seconds. It then went into the waiting stage and again prints into the log how long it'll take for the start of the chain to begin maturing which was 197.081 seconds, and the end of the chain to finish maturing which was 242.561 seconds. After this, the script renews the cycle and begins again, this time skipping the server prepping because it was already prepped. At the start of the next cycle, it reports the script's income which was $8.021b / sec.
 
 .
 
