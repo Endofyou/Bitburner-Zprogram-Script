@@ -30,7 +30,7 @@ The methodology for how this script runs is as follows (in chronological order),
     
 5.) Important files are created, such as the ones that will run hack(), grow(), and weaken(), and will then be sent to the host server via the "scp" command.
 
-6.) Server security must be at minimum as well as server money at maximum in order to continue from this point. This part of the script will efficiently run the necessary threaded grow() and weaken() scripts (in a loop if needed) until both of these conditions are met. There are 6 different protocols that are designed to fit the specific condition that a server can be in. For example, protocol 1 will be used if the host server has sufficient RAM to prep the target in one fell swoop. Protocol 3 will be used if there is only enough RAM to run weaken threads but not grow threads. security will always be higher priority than growth.
+6.) Since server security must be at minimum as well as server money at maximum in order to continue from this point, this part of the script will efficiently run the necessary threaded grow() and weaken() scripts (in a loop if needed) until both of these conditions are met. There are 6 different protocols that are designed to fit the specific condition that a server can be in. For example, protocol 1 will be used if the host server has sufficient RAM to prep the target in one fell swoop. Protocol 3 will be used if there is only enough RAM to run weaken threads but not grow threads. security will always be higher priority than growth.
 
 7.) a few variables are defined (or re-defined) in preparation for the following blocks.
 
