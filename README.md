@@ -18,7 +18,7 @@ typing in "run zprogram.js [target_name_here] [server_name_here]" into the termi
 The methodology for how this script runs is as follows (in chronological order), and each block is also numbered in the copy of the script below:
 
 
-1.) Determines a few constants and displays info in the log.
+1.) Defines a few constants and displays info in the log.
 
 2.) Determines the best server to host the script, unless a server is specifically defined as the second argument when starting zprogram.
 
