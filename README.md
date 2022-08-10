@@ -48,9 +48,9 @@ The methodology for how this script runs is as follows (in chronological order),
 
    1.)) Returns the amount of ports able to be opened based on which port programs you have.
     
-   2.)) A customized version of hackAnalyze() which returns the same value, however with the difference that it only returns a value based on minimum security level,      and ignores the current security level. This function is used in the process of determining the most profitable server.
+   2.)) A customized version of hackAnalyze() which returns the same value, however with the difference that it only returns a value based on minimum security level,      and ignores the current security level. This function is used in the process of determining the most profitable server (This function also happens to solely be used    for the needs of the function CalculatePercentInstances(). function-ception! Idk, thought it was cool when i realized you could do that).
     
-   3.)) This function is a 2-in-1. It doubles as a customized version of growthAnalyze() with similar function as the previously discussed function, and can also be      used to return the percent of money hacked per thread while having the same advantage of ignoring current security level. This function is also used in the            process of determining the most profitable server.
+   3.)) This function is a 2-in-1. It doubles as a customized version of growthAnalyze() with similar function as the previously discussed function, and can also be      used to return the percent of money hacked per thread while having the same advantage of ignoring current security level. This function is also used in the            process of determining the most profitable server (Also function-ception; used in CalculatePercentInstances()).
     
    4.)) This function is also a 2-in-1. It returns the most efficient percentage of money to hack per packet without using current security level, and returns the        ideal number of instances to run. This function is used in the process of determining the most profitable server.
     
