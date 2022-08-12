@@ -1,8 +1,9 @@
 /** @param {NS} ns */
 export async function main(ns) {
-
-    const unitime = 10;
-    const maxscripts = 9000;
+    // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
+    // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
+    const unitime = 10; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
+    const maxscripts = 9000; // the maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes).
 
     const maxinstances = Math.floor(maxscripts / 3);
 
@@ -29,7 +30,7 @@ export async function main(ns) {
     }
 
     if (ns.args[0] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
-        var target = BestServer(target, 0);
+        var target = BestTarget(0);
         ns.print("Most profitable target identified: ", target);
     } else {
         var target = ns.args[0];
@@ -46,7 +47,7 @@ export async function main(ns) {
             ns.print("WARNING: unable to gain root access.",
                 " Make sure you have the necessary programs to open ports for ",
                 target, ".");
-            BestServer(target, 1);
+            BestTarget(1);
             ns.print("Next best server available: ", target);
             if (ns.hasRootAccess(target) == true) {
                 ns.print("Root access to ", target, " has been verified.");
@@ -363,7 +364,7 @@ export async function main(ns) {
     }
 
     /*~~~ Function-ception! Let's play a game of "try to understand wtf this function is doing", glhf! ~~~*/
-    function BestServer(serverType, number) {
+    function BestTarget(number) {
 
         function CalcPercentInstances(target, number) {
             var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host),
@@ -399,19 +400,15 @@ export async function main(ns) {
                 return instances2;
             }
         }
-        if (serverType == target) {
-            var serverarray = TargetsList(),
-                arraylength = serverarray.length,
-                bestserver = 0;
-            if (number == 0) {
-                var ifstatement = 1 == 1;
-            } else if (number = 1) {
-                var ifstatement = ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExe(serverarray[i]);
-            }
+
+        var serverarray = TargetsList(),
+            arraylength = serverarray.length,
+            bestserver = 0;
+        if (number == 0) {
+            var ifstatement = 1 == 1;
+        } else if (number = 1) {
+            var ifstatement = ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExe(serverarray[i]);
         }
-
-
-        
         for (var i = 0; i < arraylength; i++) {
             var bestweakentime = CalcWeakTimeHackChance(serverarray[i], 0),
                 besthackchance = CalcWeakTimeHackChance(serverarray[i], 1),
@@ -430,116 +427,90 @@ export async function main(ns) {
         }
         return target;
     }
-    var serverarray = TargetsList(),
-        arraylength = serverarray.length,
-        bestserver = 0;
-    if (number == 0) {
-        var ifstatement = 1 == 1;
-    } else if (number = 1) {
-        var ifstatement = ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExe(serverarray[i]);
-    }
-    for (var i = 0; i < arraylength; i++) {
-        var bestweakentime = CalcWeakTimeHackChance(serverarray[i], 0),
-            besthackchance = CalcWeakTimeHackChance(serverarray[i], 1),
-            percent = CalcPercentInstances(serverarray[i], 0),
-            bestinstances = CalcPercentInstances(serverarray[i], 1);
-        if (
-            bestserver <= (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
-            (bestweakentime * (21 / 16)) &&
-            ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverarray[i]) &&
-            ifstatement
-        ) {
-            var bestserver = percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) *
-                bestinstances / (bestweakentime * (21 / 16)),
-                target = serverarray[i];
-        }
-    }
-    return target;
-}
 
-function ZprogramIntro() {
-    return ns.print("Now running Zprogram by u/DryFacade"),
-        ns.print(" "),
-        ns.print(
-            'Please note: if the calculated time between each script is extremely brief, ',
-            'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
-            'one instance of Zprogram may occasionally cause scripts to misalign temporarily.'
-        ),
-        ns.print(" ");
-}
+    function ZprogramIntro() {
+        return ns.print("Now running Zprogram by u/DryFacade"),
+            ns.print(" "),
+            ns.print(
+                'Please note: if the calculated time between each script is extremely brief, ',
+                'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
+                'one instance of Zprogram may occasionally cause scripts to misalign temporarily.'
+            ),
+            ns.print(" ");
+    }
 
-function TargetsList() {
-    return [
-        "n00dles",
-        "foodnstuff",
-        "sigma-cosmetics",
-        "joesguns",
-        "hong-fang-tea",
-        "harakiri-sushi",
-        "iron-gym",
-        "darkweb",
-        "max-hardware",
-        "zer0",
-        "nectar-net",
-        "CSEC",
-        "neo-net",
-        "phantasy",
-        "omega-net",
-        "silver-helix",
-        "the-hub",
-        "netlink",
-        "johnson-ortho",
-        "avmnite-02h",
-        "computek",
-        "crush-fitness",
-        "catalyst",
-        "syscore",
-        "I.I.I.I",
-        "rothman-uni",
-        "summit-uni",
-        "zb-institute",
-        "lexo-corp",
-        "alpha-ent",
-        "millenium-fitness",
-        "rho-construction",
-        "aevum-police",
-        "galactic-cyber",
-        "aerocorp",
-        "global-pharm",
-        "snap-fitness",
-        "omnia",
-        "unitalife",
-        "deltaone",
-        "defcomm",
-        "solaris",
-        "icarus",
-        "univ-energy",
-        "zeus-med",
-        "infocomm",
-        "taiyang-digital",
-        "zb-def",
-        "nova-med",
-        "titan-labs",
-        "applied-energetics",
-        "microdyne",
-        "run4theh111z",
-        "fulcrumtech",
-        "stormtech",
-        "helios",
-        "vitalife",
-        "kuai-gong",
-        ".",
-        "omnitek",
-        "4sigma",
-        "clarkinc",
-        "powerhouse-fitness",
-        "b-and-a",
-        "blade",
-        "nwo",
-        "ecorp",
-        "megacorp",
-        "fulcrumassets",
-        "The-Cave",
-    ];
-}
+    function TargetsList() {
+        return [
+            "n00dles",
+            "foodnstuff",
+            "sigma-cosmetics",
+            "joesguns",
+            "hong-fang-tea",
+            "harakiri-sushi",
+            "iron-gym",
+            "darkweb",
+            "max-hardware",
+            "zer0",
+            "nectar-net",
+            "CSEC",
+            "neo-net",
+            "phantasy",
+            "omega-net",
+            "silver-helix",
+            "the-hub",
+            "netlink",
+            "johnson-ortho",
+            "avmnite-02h",
+            "computek",
+            "crush-fitness",
+            "catalyst",
+            "syscore",
+            "I.I.I.I",
+            "rothman-uni",
+            "summit-uni",
+            "zb-institute",
+            "lexo-corp",
+            "alpha-ent",
+            "millenium-fitness",
+            "rho-construction",
+            "aevum-police",
+            "galactic-cyber",
+            "aerocorp",
+            "global-pharm",
+            "snap-fitness",
+            "omnia",
+            "unitalife",
+            "deltaone",
+            "defcomm",
+            "solaris",
+            "icarus",
+            "univ-energy",
+            "zeus-med",
+            "infocomm",
+            "taiyang-digital",
+            "zb-def",
+            "nova-med",
+            "titan-labs",
+            "applied-energetics",
+            "microdyne",
+            "run4theh111z",
+            "fulcrumtech",
+            "stormtech",
+            "helios",
+            "vitalife",
+            "kuai-gong",
+            ".",
+            "omnitek",
+            "4sigma",
+            "clarkinc",
+            "powerhouse-fitness",
+            "b-and-a",
+            "blade",
+            "nwo",
+            "ecorp",
+            "megacorp",
+            "fulcrumassets",
+            "The-Cave",
+        ];
+    }
 }
