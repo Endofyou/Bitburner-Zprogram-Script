@@ -1,7 +1,7 @@
 /** @param {NS} ns */
 export async function main(ns) {
     // There is no README for this version.
-    
+
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
     const unitime = 10; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
@@ -41,7 +41,7 @@ export async function main(ns) {
     if (ns.hasRootAccess(target) == true) {
         ns.print("Root access to ", target, " has been verified.");
     } else {
-        var totalports = TotalPortsExes(target);
+        var totalports = TotalPortsExes();
         if (ns.getServerNumPortsRequired(target) - totalports <= 0) {
             ns.nuke(target);
             ns.print("Gained root access to ", target, ".");
@@ -49,7 +49,7 @@ export async function main(ns) {
             ns.print("WARNING: unable to gain root access.",
                 " Make sure you have the necessary programs to open ports for ",
                 target, ".");
-            BestTarget(1);
+            var target = BestTarget(1);
             ns.print("Next best server available: ", target);
             if (ns.hasRootAccess(target) == true) {
                 ns.print("Root access to ", target, " has been verified.");
@@ -247,31 +247,26 @@ export async function main(ns) {
 
     function TotalPortsExes(target) {
         if (ns.fileExists("BruteSSH.exe", "home")) {
-            ns.brutessh(target);
             var ssh = 1;
         } else {
             var ssh = 0;
         }
         if (ns.fileExists("FTPCrack.exe", "home")) {
-            ns.ftpcrack(target);
             var ftp = 1;
         } else {
             var ftp = 0;
         }
         if (ns.fileExists("relaySMTP.exe", "home")) {
-            ns.relaysmtp(target);
             var smtp = 1;
         } else {
             var smtp = 0;
         }
         if (ns.fileExists("HTTPWorm.exe", "home")) {
-            ns.httpworm(target);
             var http = 1;
         } else {
             var http = 0;
         }
         if (ns.fileExists("SQLInject.exe", "home")) {
-            ns.sqlinject(target);
             var sql = 1;
         } else {
             var sql = 0;
@@ -403,14 +398,17 @@ export async function main(ns) {
             }
         }
 
+        function IfStatement() {
+            if (number == 0) {
+                return true;
+            } else if (number == 1) {
+                return ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExes();
+            }
+        }
+
         var serverarray = TargetsList(),
             arraylength = serverarray.length,
             bestserver = 0;
-        if (number == 0) {
-            var ifstatement = 1 == 1;
-        } else if (number = 1) {
-            var ifstatement = ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExe(serverarray[i]);
-        }
         for (var i = 0; i < arraylength; i++) {
             var bestweakentime = CalcWeakTimeHackChance(serverarray[i], 0),
                 besthackchance = CalcWeakTimeHackChance(serverarray[i], 1),
@@ -420,7 +418,7 @@ export async function main(ns) {
                 bestserver <= (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
                 (bestweakentime * (21 / 16)) &&
                 ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverarray[i]) &&
-                ifstatement
+                IfStatement()
             ) {
                 var bestserver = percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) *
                     bestinstances / (bestweakentime * (21 / 16)),
