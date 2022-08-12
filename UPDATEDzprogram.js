@@ -41,10 +41,8 @@ export async function main(ns) {
     if (ns.hasRootAccess(target) == true) {
         ns.print("Root access to ", target, " has been verified.");
     } else {
-        var totalports = TotalPortsExes();
-        if (ns.getServerNumPortsRequired(target) - totalports <= 0) {
-            ns.nuke(target);
-            ns.print("Gained root access to ", target, ".");
+        if (ns.getServerNumPortsRequired(target) - TotalPortsExes() <= 0) {
+            NukeTarget();
         } else {
             ns.print("WARNING: unable to gain root access.",
                 " Make sure you have the necessary programs to open ports for ",
