@@ -27,7 +27,7 @@ export async function main(ns) {
     }
 
     if (ns.args[0] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
-        var target = BestTarget(0);// <<<Fun fact: ~45% of the whole script is dedicated to this single function.
+        var target = BestTarget(0);// <<<Fun fact: ~45% of the whole script is dedicated to the function "BestTarget(0)".
         ns.print("Most profitable target identified: ", target);
     } else {
         var target = ns.args[0];
