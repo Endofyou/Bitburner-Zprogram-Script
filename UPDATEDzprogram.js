@@ -358,7 +358,7 @@ export async function main(ns) {
         );
     }
 
-    /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing", glhf! ~~~*/
+    /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing"! glhf♥ ~~~*/
     function BestTarget(number) {
 
         function CalcPercentInstances(target, number) {
@@ -425,16 +425,15 @@ export async function main(ns) {
         }
         return target;
     }
+    /* ^Yes I know this function is unreadable as hell. What of it? I did my best, cry about it LBozoRatio'dSkissueGitGud*/
 
     function ZprogramIntro() {
-        return ns.print("Now running Zprogram by u/DryFacade"),
-            ns.print(" "),
-            ns.print(
-                'Please note: if the calculated time between each script is extremely brief, ',
-                'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
-                'one instance of Zprogram may occasionally cause scripts to misalign temporarily.'
-            ),
-            ns.print(" ");
+        ns.print(
+            "Now running Zprogram by u/DryFacade",
+            '\n\nPlease note: if the calculated time between each script is extremely brief, ',
+            'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
+            'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
+        );
     }
 
     function TargetsList() {
