@@ -358,7 +358,7 @@ export async function main(ns) {
         );
     }
 
-    /*~~~ Function-ception! Let's play a game of "try to understand wtf this function is doing", glhf! ~~~*/
+    /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing", glhf! ~~~*/
     function BestTarget(number) {
 
         function CalcPercentInstances(target, number) {
