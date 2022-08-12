@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    // There is no README for this version.
+    // There is no README for this version. It's more or less the same, but optimized and more profitable.
 
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
