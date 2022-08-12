@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    // There is no README for this version. It's more or less the same, but optimized and more profitable.
+    // There is no README for this version.
 
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
@@ -12,27 +12,22 @@ export async function main(ns) {
     ns.clearLog();
     ns.disableLog("ALL");
     ns.tail();
-    ZprogramIntro();
+    ns.print(
+        "Now running Zprogram by u/DryFacade",
+        '\n\nPlease note: if the calculated time between each script is extremely brief, ',
+        'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
+        'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
+    );
 
     if (ns.args[1] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
-        var purchasedservers = ns.getPurchasedServers(),
-            purchasedarray = purchasedservers.length,
-            besthost = ns.getServerMaxRam("home") - ns.getServerUsedRam("home"),
-            host = "home";
-        for (var i = 0; i < purchasedarray; i++) {
-            var hostcandidate = ns.getServerMaxRam(purchasedservers[i]) - ns.getServerUsedRam(purchasedservers[i]);
-            if (hostcandidate > besthost) {
-                var besthost = hostcandidate,
-                    host = purchasedservers[i];
-            }
-        }
+        var host = BestHost();
         ns.print("Best host server identified: ", host);
     } else {
         var host = ns.args[1];
     }
 
     if (ns.args[0] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
-        var target = BestTarget(0);
+        var target = BestTarget(0);// <<<Fun fact: ~45% of the whole script is dedicated to this single function.
         ns.print("Most profitable target identified: ", target);
     } else {
         var target = ns.args[0];
@@ -43,51 +38,35 @@ export async function main(ns) {
     } else {
         if (ns.getServerNumPortsRequired(target) - TotalPortsExes() <= 0) {
             NukeTarget();
+            ns.print("Gained root access to ", target, ".");
         } else {
-            ns.print("WARNING: unable to gain root access.",
-                " Make sure you have the necessary programs to open ports for ",
-                target, ".");
+            ns.print(
+                "WARNING: unable to gain root access. Make sure you ",
+                "have the necessary programs to open ports for ", target, "."
+            );
             var target = BestTarget(1);
             ns.print("Next best server available: ", target);
             if (ns.hasRootAccess(target) == true) {
                 ns.print("Root access to ", target, " has been verified.");
             } else {
                 NukeTarget();
+                ns.print("Gained root access to ", target, ".");
             }
         }
         await ns.sleep(100);
     }
 
-    let growonce = `export async function main(ns) {
-    await ns.grow(ns.args[0]);
-}`;
+    let growonce = `export async function main(ns) { await ns.grow(ns.args[0]); }`,
+        weakenonce = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
+        zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
+        zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
+        zweaken = `export async function main(ns) { await ns.sleep(0); await ns.weaken(ns.args[0]); }`,
+        zfiles = ["growonce.js", "weakenonce.js", "zhack.js", "zgrow.js", "zweaken.js"];
     await ns.write("growonce.js", growonce, "w");
-    let weakenonce = `export async function main(ns) {
-    await ns.weaken(ns.args[0]);
-}`;
     await ns.write("weakenonce.js", weakenonce, "w");
-    let zhack = `export async function main(ns) {
-    await ns.sleep(ns.args[1]);
-    await ns.hack(ns.args[0]);
-}`;
     await ns.write("zhack.js", zhack, "w");
-    let zgrow = `export async function main(ns) {
-    await ns.sleep(ns.args[1]);
-    await ns.grow(ns.args[0]);
-}`;
     await ns.write("zgrow.js", zgrow, "w");
-    let zweaken = `export async function main(ns) {
-    await ns.sleep(0);
-    await ns.weaken(ns.args[0]);
-}`;
     await ns.write("zweaken.js", zweaken, "w");
-    let zfiles = [
-        "growonce.js",
-        "weakenonce.js",
-        "zhack.js",
-        "zgrow.js",
-        "zweaken.js",
-    ];
     await ns.scp(zfiles, "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
@@ -151,13 +130,13 @@ export async function main(ns) {
             }
         } while (seclvl > minSeclvl || maxMoney > currentMoney)
 
-        var wtime = ns.getWeakenTime(target),
+        let wtime = ns.getWeakenTime(target),
             htime = ns.getHackTime(target),
             gtime = ns.getGrowTime(target),
             sleep1 = wtime - htime,
             sleep2 = wtime - gtime;
 
-        for (var i = 1; i < 100; i++) {
+        for (let i = 1; i < 100; i++) {
             var percent = i / 100,
                 hackThdsPerPack = Math.floor(CustomHackAnalyzeThreads(target, percent)),
                 growThdsPerPack = Math.ceil(CustomGrowthAnalyzeThreads(target, percent)),
@@ -205,7 +184,7 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
-        for (var i = 0; i < instances2; i++) {
+        for (let i = 0; i < instances2; i++) {
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
             await ns.sleep(timeBetweenInstances);
             ns.exec("zgrow.js", host, growThdsPerPack, target, sleep2, i);
@@ -239,37 +218,38 @@ export async function main(ns) {
         } else {
             ns.print("Average income: $", Math.round(moneysec / 1e9) / 1e3, "t / sec.");
         }
+
     }
 
     /*~~~~~~~~~~~~~~~~~~~~  Functions  ~~~~~~~~~~~~~~~~~~~~*/
 
-    function TotalPortsExes(target) {
+    function TotalPortsExes() {
         if (ns.fileExists("BruteSSH.exe", "home")) {
-            var ssh = 1;
+            var sshEXE = 1;
         } else {
-            var ssh = 0;
+            var sshEXE = 0;
         }
         if (ns.fileExists("FTPCrack.exe", "home")) {
-            var ftp = 1;
+            var ftpEXE = 1;
         } else {
-            var ftp = 0;
+            var ftpEXE = 0;
         }
         if (ns.fileExists("relaySMTP.exe", "home")) {
-            var smtp = 1;
+            var smtpEXE = 1;
         } else {
-            var smtp = 0;
+            var smtpEXE = 0;
         }
         if (ns.fileExists("HTTPWorm.exe", "home")) {
-            var http = 1;
+            var httpEXE = 1;
         } else {
-            var http = 0;
+            var httpEXE = 0;
         }
         if (ns.fileExists("SQLInject.exe", "home")) {
-            var sql = 1;
+            var sqlEXE = 1;
         } else {
-            var sql = 0;
+            var sqlEXE = 0;
         }
-        return ssh + ftp + smtp + http + sql
+        return sshEXE + ftpEXE + smtpEXE + httpEXE + sqlEXE;
     }
 
     function NukeTarget() {
@@ -288,74 +268,22 @@ export async function main(ns) {
         if (ns.fileExists("SQLInject.exe", "home")) {
             ns.sqlinject(target);
         }
-        return (
-            ns.nuke(target),
-            ns.print("Gained root access to ", target, ".")
-        );
+        return ns.nuke(target);
     }
 
-    function CustomHackAnalyzeThreads(target, percent) {
-        return ns.getServerMaxMoney(target) * percent / (
-            ns.getServerMaxMoney(target) * ns.hackAnalyze(target) * (
-                (100 - ns.getServerMinSecurityLevel(target)) /
-                (100 - ns.getServerSecurityLevel(target))
-            )
-        );
-    }
-
-    function CalcWeakTimeHackChance(target, number) {
-        var reqhacklvl = ns.getServerRequiredHackingLevel(target),
-            minseclvl = ns.getServerMinSecurityLevel(target),
-            getseclvl = ns.getServerSecurityLevel(target),
-            hacktime = ns.getHackTime(target),
-            hacklvl = ns.getHackingLevel(target),
-            hackchance = ns.hackAnalyzeChance(target);
-        if (number == 0) {
-            return (
-                (reqhacklvl * minseclvl * 2.5 + 500) /
-                (reqhacklvl * getseclvl * 2.5 + 500)
-            ) * hacktime * 4;
-        } else if (number == 1) {
-            var percenta = (100 - minseclvl) / 100,
-                percentb = (100 - getseclvl) / 100,
-                percentc = 1.75 * hacklvl,
-                percentd = percenta * (percentc - reqhacklvl) / percentc,
-                percente = percentb * (percentc - reqhacklvl) / percentc,
-                calchackchance = hackchance * percentd / percente;
-            if (calchackchance > 1) {
-                var calchackchance = 1;
-            } else if (calchackchance < 0) {
-                var calchackchance = 0;
+    function BestHost() {
+        var purchasedservers = ns.getPurchasedServers(),
+            purchasedarray = purchasedservers.length,
+            besthost = ns.getServerMaxRam("home") - ns.getServerUsedRam("home"),
+            host = "home";
+        for (let i = 0; i < purchasedarray; i++) {
+            var hostcandidate = ns.getServerMaxRam(purchasedservers[i]) - ns.getServerUsedRam(purchasedservers[i]);
+            if (hostcandidate > besthost) {
+                var besthost = hostcandidate,
+                    host = purchasedservers[i];
             }
-            return calchackchance;
         }
-    }
-
-    function CustomGrowthAnalyzeThreads(target, variable) {
-        var growthp = 1 / (1 - variable);
-        var serverGrowthPercentage = ns.getServerGrowth(target) / 100,
-            ajdGrowthRatebit = 1 + (1.03 - 1) / ns.getServerSecurityLevel(target);
-        if (ajdGrowthRatebit > 1.0035) {
-            ajdGrowthRatebit = 1.0035;
-        }
-        var ajdGrowthRate = 1 + (1.03 - 1) / (
-            ns.getServerMinSecurityLevel(target) + hackThdsPerPack * 0.002
-        );
-        if (ajdGrowthRate > 1.0035) {
-            ajdGrowthRate = 1.0035;
-        }
-        var bitnode = (
-            Math.log(growthp) / (
-                Math.log(ajdGrowthRatebit) *
-                ns.getHackingMultipliers(target).growth *
-                (serverGrowthPercentage))
-        ) / ns.growthAnalyze(target, growthp);
-        return Math.log(growthp) / (
-            Math.log(ajdGrowthRate) *
-            ns.getHackingMultipliers(target).growth *
-            (serverGrowthPercentage) *
-            bitnode
-        );
+        return host;
     }
 
     /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing"! glhf♥ ~~~*/
@@ -364,7 +292,7 @@ export async function main(ns) {
         function CalcPercentInstances(target, number) {
             var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host),
                 wtime = bestweakentime;
-            for (var i = 1; i < 100; i++) {
+            for (let i = 1; i < 100; i++) {
                 var percent = i / 100,
                     hackThdsPerPack = Math.floor(CustomHackAnalyzeThreads(target, percent)),
                     growThdsPerPack = Math.ceil(CustomGrowthAnalyzeThreads(target, percent)),
@@ -407,7 +335,7 @@ export async function main(ns) {
         var serverarray = TargetsList(),
             arraylength = serverarray.length,
             bestserver = 0;
-        for (var i = 0; i < arraylength; i++) {
+        for (let i = 0; i < arraylength; i++) {
             var bestweakentime = CalcWeakTimeHackChance(serverarray[i], 0),
                 besthackchance = CalcWeakTimeHackChance(serverarray[i], 1),
                 percent = CalcPercentInstances(serverarray[i], 0),
@@ -425,15 +353,70 @@ export async function main(ns) {
         }
         return target;
     }
-    /* ^Yes I know this function is unreadable as hell. What of it? I did my best, cry about it LBozoRatio'dSkissueGitGud*/
+    /* ^Yes I know this function is unreadable as hell. What of it? I did my best, cry about it LBozoRatioSkissueGitGud */
 
-    function ZprogramIntro() {
-        ns.print(
-            "Now running Zprogram by u/DryFacade",
-            '\n\nPlease note: if the calculated time between each script is extremely brief, ',
-            'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
-            'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
+    function CustomHackAnalyzeThreads(target, percent) {
+        return ns.getServerMaxMoney(target) * percent / (
+            ns.getServerMaxMoney(target) * ns.hackAnalyze(target) * (
+                (100 - ns.getServerMinSecurityLevel(target)) /
+                (100 - ns.getServerSecurityLevel(target))
+            )
         );
+    }
+
+    function CustomGrowthAnalyzeThreads(target, variable) {
+        let growthp = 1 / (1 - variable),
+            serverGrowthPercentage = ns.getServerGrowth(target) / 100,
+            ajdGrowthRatebit = 1 + (1.03 - 1) / ns.getServerSecurityLevel(target);
+        if (ajdGrowthRatebit > 1.0035) {
+            ajdGrowthRatebit = 1.0035;
+        }
+        let ajdGrowthRate = 1 + (1.03 - 1) / (
+            ns.getServerMinSecurityLevel(target) + hackThdsPerPack * 0.002
+        );
+        if (ajdGrowthRate > 1.0035) {
+            ajdGrowthRate = 1.0035;
+        }
+        let bitnode = (
+            Math.log(growthp) / (
+                Math.log(ajdGrowthRatebit) *
+                ns.getHackingMultipliers(target).growth *
+                (serverGrowthPercentage))
+        ) / ns.growthAnalyze(target, growthp);
+        return Math.log(growthp) / (
+            Math.log(ajdGrowthRate) *
+            ns.getHackingMultipliers(target).growth *
+            (serverGrowthPercentage) *
+            bitnode
+        );
+    }
+
+    function CalcWeakTimeHackChance(target, number) {
+        var reqhacklvl = ns.getServerRequiredHackingLevel(target),
+            minseclvl = ns.getServerMinSecurityLevel(target),
+            getseclvl = ns.getServerSecurityLevel(target),
+            hacktime = ns.getHackTime(target),
+            hacklvl = ns.getHackingLevel(target),
+            hackchance = ns.hackAnalyzeChance(target);
+        if (number == 0) {
+            return (
+                (reqhacklvl * minseclvl * 2.5 + 500) /
+                (reqhacklvl * getseclvl * 2.5 + 500)
+            ) * hacktime * 4;
+        } else if (number == 1) {
+            var percenta = (100 - minseclvl) / 100,
+                percentb = (100 - getseclvl) / 100,
+                percentc = 1.75 * hacklvl,
+                percentd = percenta * (percentc - reqhacklvl) / percentc,
+                percente = percentb * (percentc - reqhacklvl) / percentc,
+                calchackchance = hackchance * percentd / percente;
+            if (calchackchance > 1) {
+                var calchackchance = 1;
+            } else if (calchackchance < 0) {
+                var calchackchance = 0;
+            }
+            return calchackchance;
+        }
     }
 
     function TargetsList() {
