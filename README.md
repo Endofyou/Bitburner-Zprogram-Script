@@ -1,4 +1,7 @@
 # Bitburner-Zprogram-Script
+
+(OUTDATED)
+
 Zprogram by u/DryFacade
 
 
