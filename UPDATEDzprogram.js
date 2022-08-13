@@ -353,7 +353,7 @@ export async function main(ns) {
         }
         return target;
     }
-    /* ^Yes I know this function is unreadable as hell. What of it? I did my best, cry about it LBozoRatioSkissueGitGud */
+    /* ^Yes I know this function is unreadable as hell, what of it? I did my best, cry about it LBozoRatioSkissueGitGud */
 
     function CustomHackAnalyzeThreads(target, percent) {
         return ns.getServerMaxMoney(target) * percent / (
