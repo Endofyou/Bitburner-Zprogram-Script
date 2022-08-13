@@ -1,10 +1,10 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    // There is no README for this version. This is the most up-to-date version.
+    // There is no README for this version. This is the best version.
 
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const unitime = 0; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
+    const unitime = 10.5; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
     const maxscripts = 9000; // the maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes).
 
     const maxinstances = Math.floor(maxscripts / 3);
@@ -129,17 +129,13 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
-        var timeStopper = ns.getTimeSinceLastAug();
         for (let i = 0; i < instances2; i++) {
-            if (timeStopper + wtime / 5 - 400 < ns.getTimeSinceLastAug()) {
-                break;
-            }
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
-            await ns.sleep(0);
+            await ns.sleep(timeBetweenInstances);
             ns.exec("zgrow.js", host, growThdsPerPack, target, sleep2, i);
-            await ns.sleep(0);
+            await ns.sleep(timeBetweenInstances);
             ns.exec("zweaken.js", host, weakThdsPerPack, target, i);
-            await ns.sleep(0);
+            await ns.sleep(timeBetweenInstances);
         }
 
         ns.print(
