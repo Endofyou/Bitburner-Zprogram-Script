@@ -1,10 +1,10 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    // There is no README for this version. This is the best version.
+    // There is no README for this version. This is the most up-to-date version.
 
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const unitime = 10.5; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
+    const unitime = 0; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
     const maxscripts = 9000; // the maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes).
 
     const maxinstances = Math.floor(maxscripts / 3);
@@ -70,65 +70,10 @@ export async function main(ns) {
     await ns.scp(zfiles, "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
-    while (true) {
+    var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host);
+    await PrepServer(0);
 
-        ns.print("Verifying that target server is prepped...");
-        do {
-            var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host),
-                maxMoney = ns.getServerMaxMoney(target),
-                currentMoney = ns.getServerMoneyAvailable(target),
-                seclvl = ns.getServerSecurityLevel(target),
-                minSeclvl = ns.getServerMinSecurityLevel(target),
-                seclvlRemoved = seclvl - minSeclvl,
-                weakThreads = seclvlRemoved / 0.05,
-                growthMultiplier = ns.getServerMaxMoney(target) / ns.getServerMoneyAvailable(target),
-                growThreads = ns.growthAnalyze(target, growthMultiplier, 1),
-                extraWeakThreads = (growThreads * 0.004) / 0.05 + 2,
-                extraWeakGrowRam = (growThreads + extraWeakThreads) * 1.75,
-                extraWeakGrowRatio = freeRam / extraWeakGrowRam;
-            if (seclvl > minSeclvl) {
-                ns.print("WARNING: target server requires prepping. Now initializing a grow/weaken protocol.");
-                if (maxMoney > currentMoney) {
-                    if (Math.ceil(weakThreads * 1.75) + Math.ceil(extraWeakGrowRam) < freeRam) {
-                        var protocol = "protocol 1";
-                        ns.exec("growonce.js", host, Math.ceil(growThreads), target);
-                        ns.exec("weakenonce.js", host, Math.ceil(extraWeakThreads + weakThreads), target);
-                    } else if (Math.ceil(weakThreads * 1.75 + 1.75) < freeRam) {
-                        var protocol = "protocol 2";
-                        ns.exec("growonce.js", host, Math.floor(
-                            freeRam / 1.75 - weakThreads - (0.004 * (freeRam / 1.75 - weakThreads) / 0.05)
-                        ) - 1, target);
-                        ns.exec("weakenonce.js", host, Math.floor(
-                            weakThreads + (0.004 * (freeRam / 1.75 - weakThreads) / 0.05)
-                        ) + 1, target);
-                    } else {
-                        var protocol = "protocol 3";
-                        ns.exec("weakenonce.js", host, Math.floor(freeRam / 1.75), target);
-                    }
-                } else {
-                    var protocol = "protocol 4";
-                    ns.exec("weakenonce.js", host, Math.ceil(weakThreads), target);
-                }
-            } else if (maxMoney > currentMoney) {
-                ns.print("WARNING: target server requires prepping. Now initializing a grow/weaken protocol.");
-                if (Math.ceil(extraWeakGrowRam) < freeRam) {
-                    var protocol = "protocol 5";
-                    ns.exec("growonce.js", host, Math.ceil(growThreads), target);
-                    ns.exec("weakenonce.js", host, Math.ceil(extraWeakThreads), target);
-                } else {
-                    var protocol = "protocol 6";
-                    ns.exec("growonce.js", host, Math.floor(growThreads * extraWeakGrowRatio) - 1, target);
-                    ns.exec("weakenonce.js", host, Math.floor(extraWeakThreads * extraWeakGrowRatio) + 1, target);
-                }
-            }
-            if (seclvl > minSeclvl || maxMoney > currentMoney) {
-                ns.print(protocol, " will take ", Math.round(ns.getWeakenTime(target) + 1000) / 1000,
-                    " seconds. Multiple instances may be looped...");
-                await ns.sleep(ns.getWeakenTime(target) + 1000);
-            } else {
-                ns.print("Target server is prepped.");
-            }
-        } while (seclvl > minSeclvl || maxMoney > currentMoney)
+    while (true) {
 
         let wtime = ns.getWeakenTime(target),
             htime = ns.getHackTime(target),
@@ -184,13 +129,17 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
+        var timeStopper = ns.getTimeSinceLastAug();
         for (let i = 0; i < instances2; i++) {
+            if (timeStopper + wtime / 5 - 400 < ns.getTimeSinceLastAug()) {
+                break;
+            }
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(0);
             ns.exec("zgrow.js", host, growThdsPerPack, target, sleep2, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(0);
             ns.exec("zweaken.js", host, weakThdsPerPack, target, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(0);
         }
 
         ns.print(
@@ -199,7 +148,7 @@ export async function main(ns) {
             " seconds and will finish in ",
             Math.round(wtime) / 1000, " seconds."
         );
-        await ns.sleep(wtime + unitime);
+        await ns.sleep(wtime + unitime * 2);
 
         ns.print("Cycle complete. Renewing script chain...\n\n");
         if (ns.args[0] == null && ns.args[1] == null) {
@@ -218,6 +167,8 @@ export async function main(ns) {
         } else {
             ns.print("Average income: $", Math.round(moneysec / 1e9) / 1e3, "t / sec.");
         }
+
+        await PrepServer(1);
 
     }
 
@@ -284,6 +235,74 @@ export async function main(ns) {
             }
         }
         return host;
+    }
+
+    async function PrepServer(number) {
+        ns.print("Verifying that target server is prepped...");
+        while (
+            ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target) ||
+            ns.getServerMaxMoney(target) > ns.getServerMoneyAvailable(target)
+        ) {
+            await ns.sleep(200);
+            var maxMoney = ns.getServerMaxMoney(target),
+                currentMoney = ns.getServerMoneyAvailable(target),
+                seclvl = ns.getServerSecurityLevel(target),
+                minSeclvl = ns.getServerMinSecurityLevel(target),
+                seclvlRemoved = seclvl - minSeclvl,
+                weakThreads = seclvlRemoved / 0.05,
+                growthMultiplier = ns.getServerMaxMoney(target) / ns.getServerMoneyAvailable(target),
+                growThreads = ns.growthAnalyze(target, growthMultiplier, 1),
+                extraWeakThreads = (growThreads * 0.004) / 0.05 + 2,
+                extraWeakGrowRam = (growThreads + extraWeakThreads) * 1.75,
+                extraWeakGrowRatio = freeRam / extraWeakGrowRam;
+            if (seclvl > minSeclvl) {
+                if (maxMoney > currentMoney) {
+                    if (Math.ceil(weakThreads * 1.75) + Math.ceil(extraWeakGrowRam) < freeRam) {
+                        var protocol = "protocol 1";
+                        ns.exec("growonce.js", host, Math.ceil(growThreads), target);
+                        ns.exec("weakenonce.js", host, Math.ceil(extraWeakThreads + weakThreads), target);
+                    } else if (Math.ceil(weakThreads * 1.75 + 1.75) < freeRam) {
+                        var protocol = "protocol 2";
+                        ns.exec("growonce.js", host, Math.floor(
+                            freeRam / 1.75 - weakThreads - (0.004 * (freeRam / 1.75 - weakThreads) / 0.05)
+                        ) - 1, target);
+                        ns.exec("weakenonce.js", host, Math.floor(
+                            weakThreads + (0.004 * (freeRam / 1.75 - weakThreads) / 0.05)
+                        ) + 1, target);
+                    } else {
+                        var protocol = "protocol 3";
+                        ns.exec("weakenonce.js", host, Math.floor(freeRam / 1.75), target);
+                    }
+                } else {
+                    var protocol = "protocol 4";
+                    ns.exec("weakenonce.js", host, Math.ceil(weakThreads), target);
+                }
+            } else if (maxMoney > currentMoney) {
+                if (Math.ceil(extraWeakGrowRam) < freeRam) {
+                    var protocol = "protocol 5";
+                    ns.exec("growonce.js", host, Math.ceil(growThreads), target);
+                    ns.exec("weakenonce.js", host, Math.ceil(extraWeakThreads), target);
+                } else {
+                    var protocol = "protocol 6";
+                    ns.exec("growonce.js", host, Math.floor(growThreads * extraWeakGrowRatio) - 1, target);
+                    ns.exec("weakenonce.js", host, Math.floor(extraWeakThreads * extraWeakGrowRatio) + 1, target);
+                }
+            }
+            if (number == 0) {
+                ns.print("WARNING: target server requires prepping. Now initializing a grow/weaken packet.");
+            } else if (number == 1) {
+                ns.print(
+                    'WARNING: scripts have misaligned. If this happens frequently, consider raising the ',
+                    'constant "unitime" within the script. Now initializing a grow/weaken packet.'
+                );
+            }
+            ns.print(
+                protocol, " will take ", Math.round(ns.getWeakenTime(target) + unitime) / 1000,
+                " seconds. Multiple instances may be looped..."
+            );
+            await ns.sleep(ns.getWeakenTime(target) + unitime);
+        }
+        ns.print("Target server is prepped.");
     }
 
     /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing"! glhf♥ ~~~*/
