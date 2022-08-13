@@ -4,7 +4,7 @@ export async function main(ns) {
 
     // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const unitime = 10.5; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
+    const minimumtime = 8; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
     const maxscripts = 9000; // the maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes).
 
     const maxinstances = Math.floor(maxscripts / 3);
@@ -17,6 +17,40 @@ export async function main(ns) {
         '\n\nPlease note: if the calculated time between each script is extremely brief, ',
         'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
         'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
+    );
+
+    let growonce = `export async function main(ns) { await ns.grow(ns.args[0]); }`,
+        weakenonce = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
+        zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
+        zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
+        zweaken = `export async function main(ns) { await ns.sleep(0); await ns.weaken(ns.args[0]); }`,
+        zfiles = ["growonce.js", "weakenonce.js", "zhack.js", "zgrow.js", "zweaken.js"];
+    await ns.write("growonce.js", growonce, "w");
+    await ns.write("weakenonce.js", weakenonce, "w");
+    await ns.write("zhack.js", zhack, "w");
+    await ns.write("zgrow.js", zgrow, "w");
+    await ns.write("zweaken.js", zweaken, "w");
+
+    ns.print("Now calculating javascript latency. This should take under 30 seconds...");
+    if (minimumtime < 5) {
+        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
+        ns.exit();
+    }
+    let stopwatchStart = ns.getTimeSinceLastAug();
+    let timeLimit = 20000 / (minimumtime * 3)
+    for (let i = 0, target = "n00dles", host = BestHost(); i < timeLimit; i++) {
+        ns.exec("zhack.js", host, 1, target, 0, i);
+        await ns.sleep(minimumtime);
+        ns.exec("zgrow.js", host, 1, target, 0, i);
+        await ns.sleep(minimumtime);
+        ns.exec("zweaken.js", host, 1, target, i);
+        await ns.sleep(minimumtime);
+    }
+    const unitime = (ns.getTimeSinceLastAug() - stopwatchStart) / (Math.ceil(timeLimit) * 3);
+    const jsLatency = unitime - minimumtime;
+    ns.print(
+        "\n", Math.round(jsLatency * 1000) / 1000,
+        " ms of additional latency between script executions detected. Now factoring latency..."
     );
 
     if (ns.args[1] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
@@ -56,17 +90,6 @@ export async function main(ns) {
         await ns.sleep(100);
     }
 
-    let growonce = `export async function main(ns) { await ns.grow(ns.args[0]); }`,
-        weakenonce = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
-        zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
-        zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
-        zweaken = `export async function main(ns) { await ns.sleep(0); await ns.weaken(ns.args[0]); }`,
-        zfiles = ["growonce.js", "weakenonce.js", "zhack.js", "zgrow.js", "zweaken.js"];
-    await ns.write("growonce.js", growonce, "w");
-    await ns.write("weakenonce.js", weakenonce, "w");
-    await ns.write("zhack.js", zhack, "w");
-    await ns.write("zgrow.js", zgrow, "w");
-    await ns.write("zweaken.js", zweaken, "w");
     await ns.scp(zfiles, "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
@@ -129,6 +152,9 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
+        if (timeBetweenInstances = unitime) {
+            var timeBetweenInstances = unitime - jsLatency
+        }
         for (let i = 0; i < instances2; i++) {
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
             await ns.sleep(timeBetweenInstances);
@@ -289,7 +315,7 @@ export async function main(ns) {
             } else if (number == 1) {
                 ns.print(
                     'WARNING: scripts have misaligned. If this happens frequently, consider raising the ',
-                    'constant "unitime" within the script. Now initializing a grow/weaken packet.'
+                    'constant "minimumtime" within the script. Now initializing a grow/weaken packet.'
                 );
             }
             ns.print(
