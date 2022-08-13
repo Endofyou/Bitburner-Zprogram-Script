@@ -152,18 +152,15 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
-        if (timeBetweenInstances = unitime) {
-            var timeBetweenInstances = unitime - jsLatency
-        }
+        let executionTime = timeBetweenInstances - jsLatency
         for (let i = 0; i < instances2; i++) {
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(executionTime);
             ns.exec("zgrow.js", host, growThdsPerPack, target, sleep2, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(executionTime);
             ns.exec("zweaken.js", host, weakThdsPerPack, target, i);
-            await ns.sleep(timeBetweenInstances);
+            await ns.sleep(executionTime);
         }
-
         ns.print(
             "Done. Script chain will start in ",
             Math.round(wtime - timeBetweenInstances * instances2 * 3) / 1000,
