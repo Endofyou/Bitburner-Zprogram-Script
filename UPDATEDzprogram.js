@@ -333,7 +333,7 @@ export async function main(ns) {
                 }
             }
             if (number == 0) {
-                ns.print("WARNING: target server must first be prepped. Now initializing a grow/weaken packet.");
+                ns.print("WARNING: target server requires additional prepping. Now initializing a grow/weaken packet.");
             } else if (number == 1) {
                 ns.print(
                     'WARNING: scripts have misaligned. If this happens too frequently, consider raising the ',
