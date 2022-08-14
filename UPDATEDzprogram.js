@@ -61,8 +61,9 @@ export async function main(ns) {
         }
     }
 
-    let stopwatchStart = ns.getTimeSinceLastAug(),
-        timeLimit = 30000 / (minimumtime * 3);
+    ns.exec("zkillall.js", "zstopwatch", 1, i);
+    let timeLimit = 30000 / (minimumtime * 3),
+        stopwatchStart = ns.getTimeSinceLastAug();
     for (let i = 0, host = "zstopwatch", target = "n00dles"; i < timeLimit; i++) {
         ns.exec("zhack.js", host, 1, target, 0, i);
         await ns.sleep(minimumtime);
@@ -283,6 +284,19 @@ export async function main(ns) {
 
     async function PrepServer(number) {
         ns.print("Verifying that target server is prepped...");
+        if (
+            ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target) ||
+            ns.getServerMaxMoney(target) > ns.getServerMoneyAvailable(target)
+        ) {
+            if (number == 0) {
+                ns.print("WARNING: target server must first be prepped before continuing.");
+            } else if (number == 1) {
+                ns.print(
+                    'WARNING: scripts have misaligned. If this happens too frequently,',
+                    ' consider raising the constant "minimumtime" within the script.'
+                );
+            }
+        }
         while (
             ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target) ||
             ns.getServerMaxMoney(target) > ns.getServerMoneyAvailable(target)
@@ -332,17 +346,10 @@ export async function main(ns) {
                     ns.exec("weakenonce.js", host, Math.floor(extraWeakThreads * extraWeakGrowRatio) + 1, target);
                 }
             }
-            if (number == 0) {
-                ns.print("WARNING: target server requires additional prepping. Now initializing a grow/weaken packet.");
-            } else if (number == 1) {
-                ns.print(
-                    'WARNING: scripts have misaligned. If this happens too frequently, consider raising the ',
-                    'constant "minimumtime" within the script. Now initializing a grow/weaken packet.'
-                );
-            }
             ns.print(
-                protocol, " will take ", Math.round(ns.getWeakenTime(target) + unitime) / 1000,
-                " seconds. Multiple instances may be looped..."
+                "Now initializing a grow/weaken packet. ", protocol,
+                " will take ", Math.round(ns.getWeakenTime(target) + unitime) / 1000,
+                " seconds. Multiple packets may be looped..."
             );
             await ns.sleep(ns.getWeakenTime(target) + unitime);
         }
