@@ -1,13 +1,14 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    // There is no README for this version. This is the best version.
+    //There is no README for this version. This is the best version.
 
-    // ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
-    // These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const minimumtime = 10; // the minimum time allowed between script executions in milliseconds (raise if scripts misalign).
-    const maxscripts = 9000; // the maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes).
+    //ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
+    //These are constants that act as limiters and that may be configured for increased or decreased performance needs:
+    const minimumtime = 8; //The minimum time allowed between script executions in milliseconds (raise if scripts misalign)
+    const maxscripts = 9000; //The maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes)
 
     const maxinstances = Math.floor(maxscripts / 3);
+    const calcIncome1 = ns.getTimeSinceLastAug();
 
     ns.clearLog();
     ns.disableLog("ALL");
@@ -19,40 +20,6 @@ export async function main(ns) {
         'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
     );
 
-    let growonce = `export async function main(ns) { await ns.grow(ns.args[0]); }`,
-        weakenonce = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
-        zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
-        zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
-        zweaken = `export async function main(ns) { await ns.sleep(0); await ns.weaken(ns.args[0]); }`,
-        zfiles = ["growonce.js", "weakenonce.js", "zhack.js", "zgrow.js", "zweaken.js"];
-    await ns.write("growonce.js", growonce, "w");
-    await ns.write("weakenonce.js", weakenonce, "w");
-    await ns.write("zhack.js", zhack, "w");
-    await ns.write("zgrow.js", zgrow, "w");
-    await ns.write("zweaken.js", zweaken, "w");
-
-    ns.print("Now calculating javascript latency. This should take under 30 seconds...");
-    if (minimumtime < 5) {
-        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
-        ns.exit();
-    }
-    let stopwatchStart = ns.getTimeSinceLastAug();
-    let timeLimit = 20000 / (minimumtime * 3)
-    for (let i = 0, target = "n00dles", host = BestHost(); i < timeLimit; i++) {
-        ns.exec("zhack.js", host, 1, target, 0, i);
-        await ns.sleep(minimumtime);
-        ns.exec("zgrow.js", host, 1, target, 0, i);
-        await ns.sleep(minimumtime);
-        ns.exec("zweaken.js", host, 1, target, i);
-        await ns.sleep(minimumtime);
-    }
-    const unitime = (ns.getTimeSinceLastAug() - stopwatchStart) / (Math.ceil(timeLimit) * 3);
-    const jsLatency = unitime - minimumtime;
-    ns.print(
-        "\n", Math.round(jsLatency * 1000) / 1000,
-        " ms of additional latency between script executions detected. Now factoring latency..."
-    );
-
     if (ns.args[1] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
         var host = BestHost();
         ns.print("Best host server identified: ", host);
@@ -60,8 +27,60 @@ export async function main(ns) {
         var host = ns.args[1];
     }
 
+    let growonce = `export async function main(ns) { await ns.grow(ns.args[0]); }`,
+        weakenonce = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
+        zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
+        zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
+        zweaken = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
+        zkillall = `export async function main(ns) { ns.killall("zstopwatch"); }`;
+    await ns.write("growonce.js", growonce, "w");
+    await ns.write("weakenonce.js", weakenonce, "w");
+    await ns.write("zhack.js", zhack, "w");
+    await ns.write("zgrow.js", zgrow, "w");
+    await ns.write("zweaken.js", zweaken, "w");
+    await ns.write("zkillall.js", zkillall, "w");
+    await ns.scp(ScriptsList(), "home", host);
+    ns.print("Copy/pasted necessary files to host server.");
+
+    ns.print("Now calculating javascript system latency...");
+    if (minimumtime < 2) {
+        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
+        ns.exit();
+    }
+    if (ns.serverExists("zstopwatch") == false) {
+        if (
+            ns.getPurchasedServerCost(8) <= ns.getServerMoneyAvailable("home") &&
+            ns.getPurchasedServers().length < 25
+        ) {
+            ns.purchaseServer("zstopwatch", 8);
+            await ns.scp(ScriptsList(), "home", "zstopwatch");
+            ns.print('Successfully purchased "zstopwatch" testing server.');
+        } else {
+            ns.print("ERROR: unable to purchase a testbenching server at 8 GB. Killing script...")
+            ns.exit();
+        }
+    }
+
+    let stopwatchStart = ns.getTimeSinceLastAug(),
+        timeLimit = 30000 / (minimumtime * 3);
+    for (let i = 0, host = "zstopwatch", target = "n00dles"; i < timeLimit; i++) {
+        ns.exec("zhack.js", host, 1, target, 0, i);
+        await ns.sleep(minimumtime);
+        ns.exec("zgrow.js", host, 1, target, 0, i);
+        await ns.sleep(minimumtime);
+        ns.exec("zweaken.js", host, 1, target, i);
+        await ns.sleep(minimumtime);
+        ns.exec("zkillall.js", host, 1, i);
+    }
+    const unitime = (ns.getTimeSinceLastAug() - stopwatchStart) / (Math.ceil(timeLimit) * 3);
+    const jsLatency = unitime - minimumtime;
+    ns.print(
+        Math.round(jsLatency * 1000) / 1000,
+        " ms of additional latency between script executions detected. Now factoring latency..."
+    );
+
     if (ns.args[0] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
-        var target = BestTarget(0);// <<<Fun fact: ~45% of the whole script is dedicated to the function "BestTarget()".
+        var target = BestTarget(0);
         ns.print("Most profitable target identified: ", target);
     } else {
         var target = ns.args[0];
@@ -90,11 +109,11 @@ export async function main(ns) {
         await ns.sleep(100);
     }
 
-    await ns.scp(zfiles, "home", host);
-    ns.print("Copy/pasted necessary files to host server.");
-
-    var freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host);
+    let freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host);
     await PrepServer(0);
+
+    ns.print("\nNow starting average income calculations.");
+    const calcIncome2 = ns.getTimeSinceLastAug();
 
     while (true) {
 
@@ -152,14 +171,14 @@ export async function main(ns) {
             Math.round(timeBetweenInstances * instances2 * 3) / 1000, " seconds."
         );
 
-        let executionTime = timeBetweenInstances - jsLatency
+        let timeMinusLatency = timeBetweenInstances - jsLatency
         for (let i = 0; i < instances2; i++) {
             ns.exec("zhack.js", host, hackThdsPerPack, target, sleep1, i);
-            await ns.sleep(executionTime);
+            await ns.sleep(timeMinusLatency);
             ns.exec("zgrow.js", host, growThdsPerPack, target, sleep2, i);
-            await ns.sleep(executionTime);
+            await ns.sleep(timeMinusLatency);
             ns.exec("zweaken.js", host, weakThdsPerPack, target, i);
-            await ns.sleep(executionTime);
+            await ns.sleep(timeMinusLatency);
         }
         ns.print(
             "Done. Script chain will start in ",
@@ -170,10 +189,16 @@ export async function main(ns) {
         await ns.sleep(wtime + unitime * 2);
 
         ns.print("Cycle complete. Renewing script chain...\n\n");
+        let calcIncome3 = ns.getTimeSinceLastAug(),
+            incomeMultiplier = (calcIncome3 - calcIncome1) / (calcIncome3 - calcIncome2);
         if (ns.args[0] == null && ns.args[1] == null) {
-            var moneysec = ns.getScriptIncome(ns.getScriptName(), ns.getHostname());
+            var moneysec = ns.getScriptIncome(
+                ns.getScriptName(), ns.getHostname()
+            ) * incomeMultiplier;
         } else {
-            var moneysec = ns.getScriptIncome(ns.getScriptName(), ns.getHostname(), ns.args[0], ns.args[1]);
+            var moneysec = ns.getScriptIncome(
+                ns.getScriptName(), ns.getHostname(), ns.args[0], ns.args[1]
+            ) * incomeMultiplier;
         }
         if (moneysec < 1e3) {
             ns.print("Average income: $", Math.round(moneysec * 1e3) / 1e3, " / sec.");
@@ -308,10 +333,10 @@ export async function main(ns) {
                 }
             }
             if (number == 0) {
-                ns.print("WARNING: target server requires prepping. Now initializing a grow/weaken packet.");
+                ns.print("WARNING: target server must first be prepped. Now initializing a grow/weaken packet.");
             } else if (number == 1) {
                 ns.print(
-                    'WARNING: scripts have misaligned. If this happens frequently, consider raising the ',
+                    'WARNING: scripts have misaligned. If this happens too frequently, consider raising the ',
                     'constant "minimumtime" within the script. Now initializing a grow/weaken packet.'
                 );
             }
@@ -455,6 +480,17 @@ export async function main(ns) {
             }
             return calchackchance;
         }
+    }
+
+    function ScriptsList() {
+        return [
+            "growonce.js",
+            "weakenonce.js",
+            "zhack.js",
+            "zgrow.js",
+            "zweaken.js",
+            "zkillall.js",
+        ];
     }
 
     function TargetsList() {
