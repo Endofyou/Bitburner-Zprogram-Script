@@ -44,7 +44,7 @@ export async function main(ns) {
 
     ns.print("Now calculating javascript system latency...");
     if (minimumtime < 2) {
-        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
+        ns.print('ERROR: constant "minimumtime" cannot be set lower than 2 ms! Killing script...');
         ns.exit();
     }
     if (ns.serverExists("zstopwatch") == false) {
