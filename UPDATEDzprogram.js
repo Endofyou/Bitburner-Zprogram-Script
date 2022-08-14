@@ -43,8 +43,8 @@ export async function main(ns) {
     ns.print("Copy/pasted necessary files to host server.");
 
     ns.print("Now calculating javascript system latency...");
-    if (minimumtime < 2) {
-        ns.print('ERROR: constant "minimumtime" cannot be set lower than 2 ms! Killing script...');
+    if (minimumtime < 5) {
+        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
         ns.exit();
     }
     if (ns.serverExists("zstopwatch") == false) {
