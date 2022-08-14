@@ -42,7 +42,7 @@ export async function main(ns) {
     await ns.scp(ScriptsList(), "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
-    ns.print("Now calculating javascript system latency. Please standby until finished...");
+    ns.print('Now calculating javascript system latency. Please avoid viewing the "Active Scripts" tab...');
     if (minimumtime < 5) {
         ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
         ns.exit();
