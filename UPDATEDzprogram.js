@@ -61,6 +61,10 @@ export async function main(ns) {
         }
     }
 
+    if (ns.hasRootAccess("n00dles") == false) {
+        ns.nuke("n00dles");
+        ns.print("Successfully nuked n00dles.")
+    }
     ns.exec("zkillall.js", "zstopwatch", 1);
     let timeLimit = 30000 / (minimumtime * 3),
         stopwatchStart = ns.getTimeSinceLastAug();
