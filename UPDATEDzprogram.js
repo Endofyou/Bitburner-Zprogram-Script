@@ -291,13 +291,17 @@ export async function main(ns) {
             ns.getServerMaxMoney(target) > ns.getServerMoneyAvailable(target)
         ) {
             await ns.sleep(200);
+            if (ns.getServerMoneyAvailable(target) > 1) {
+                var growthMultiplier = (ns.getServerMaxMoney(target)) / (ns.getServerMoneyAvailable(target));
+            } else {
+                var growthMultiplier = ns.getServerMaxMoney(target) / 1;
+            }
             var maxMoney = ns.getServerMaxMoney(target),
                 currentMoney = ns.getServerMoneyAvailable(target),
                 seclvl = ns.getServerSecurityLevel(target),
                 minSeclvl = ns.getServerMinSecurityLevel(target),
                 seclvlRemoved = seclvl - minSeclvl,
                 weakThreads = seclvlRemoved / 0.05,
-                growthMultiplier = ns.getServerMaxMoney(target) / ns.getServerMoneyAvailable(target),
                 growThreads = ns.growthAnalyze(target, growthMultiplier, 1),
                 extraWeakThreads = (growThreads * 0.004) / 0.05 + 2,
                 extraWeakGrowRam = (growThreads + extraWeakThreads) * 1.75,
