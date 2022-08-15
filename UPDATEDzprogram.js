@@ -294,7 +294,7 @@ export async function main(ns) {
             if (ns.getServerMoneyAvailable(target) > 1) {
                 var growthMultiplier = (ns.getServerMaxMoney(target)) / (ns.getServerMoneyAvailable(target));
             } else {
-                var growthMultiplier = ns.getServerMaxMoney(target) / 1;
+                var growthMultiplier = ns.getServerMaxMoney(target);
             }
             var maxMoney = ns.getServerMaxMoney(target),
                 currentMoney = ns.getServerMoneyAvailable(target),
