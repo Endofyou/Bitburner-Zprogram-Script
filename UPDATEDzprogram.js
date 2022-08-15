@@ -4,7 +4,7 @@ export async function main(ns) {
 
     //ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     //These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const minimumtime = 5; //The minimum time allowed between script executions in milliseconds (raise if scripts misalign)
+    const minimumtime = 10; //The minimum time allowed between script executions in milliseconds (raise if scripts misalign)
     const maxscripts = 9000; //The maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes)
 
     const maxinstances = Math.floor(maxscripts / 3);
