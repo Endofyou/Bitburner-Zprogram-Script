@@ -4,7 +4,7 @@ export async function main(ns) {
 
     //ALTER ONE OR BOTH OF THESE CONSTANTS IF NEEDED:
     //These are constants that act as limiters and that may be configured for increased or decreased performance needs:
-    const minimumtime = 10; //The minimum time allowed between script executions in milliseconds (raise if scripts misalign)
+    const minimumtime = 5; //The minimum time allowed between script executions in milliseconds (raise if scripts misalign)
     const maxscripts = 9000; //The maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes)
 
     const maxinstances = Math.floor(maxscripts / 3);
@@ -267,21 +267,6 @@ export async function main(ns) {
         return ns.nuke(target);
     }
 
-    function BestHost() {
-        var purchasedservers = ns.getPurchasedServers(),
-            purchasedarray = purchasedservers.length,
-            besthost = ns.getServerMaxRam("home") - ns.getServerUsedRam("home"),
-            host = "home";
-        for (let i = 0; i < purchasedarray; i++) {
-            var hostcandidate = ns.getServerMaxRam(purchasedservers[i]) - ns.getServerUsedRam(purchasedservers[i]);
-            if (hostcandidate > besthost) {
-                var besthost = hostcandidate,
-                    host = purchasedservers[i];
-            }
-        }
-        return host;
-    }
-
     async function PrepServer(number) {
         ns.print("Verifying that target server is prepped...");
         if (
@@ -354,6 +339,21 @@ export async function main(ns) {
             await ns.sleep(ns.getWeakenTime(target) + unitime);
         }
         ns.print("Target server is prepped.");
+    }
+
+    function BestHost() {
+        var purchasedservers = ns.getPurchasedServers(),
+            purchasedarray = purchasedservers.length,
+            besthost = ns.getServerMaxRam("home") - ns.getServerUsedRam("home"),
+            host = "home";
+        for (let i = 0; i < purchasedarray; i++) {
+            var hostcandidate = ns.getServerMaxRam(purchasedservers[i]) - ns.getServerUsedRam(purchasedservers[i]);
+            if (hostcandidate > besthost) {
+                var besthost = hostcandidate,
+                    host = purchasedservers[i];
+            }
+        }
+        return host;
     }
 
     /*~~~ Function-ception! Let's play a game of "try to figure out wtf this function is doing"! glhf♥ ~~~*/
