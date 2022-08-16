@@ -19,6 +19,10 @@ export async function main(ns) {
         'looking at the UI of the "Active scripts" tab to the left as well as running more than ',
         'one instance of Zprogram may occasionally cause scripts to misalign temporarily.\n\n'
     );
+    if (minimumtime < 5) {
+        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
+        ns.exit();
+    }
 
     if (ns.args[1] == "best" || (ns.args[0] == null && ns.args[1] == null)) {
         var host = BestHost();
@@ -42,11 +46,6 @@ export async function main(ns) {
     await ns.scp(ScriptsList(), "home", host);
     ns.print("Copy/pasted necessary files to host server.");
 
-    ns.print('Now calculating javascript system latency. Please avoid viewing the "Active Scripts" tab...');
-    if (minimumtime < 5) {
-        ns.print('ERROR: constant "minimumtime" cannot be set lower than 5 ms! Killing script...');
-        ns.exit();
-    }
     if (ns.serverExists("zstopwatch") == false) {
         if (
             ns.getPurchasedServerCost(8) <= ns.getServerMoneyAvailable("home") &&
@@ -60,11 +59,12 @@ export async function main(ns) {
             ns.exit();
         }
     }
-
     if (ns.hasRootAccess("n00dles") == false) {
         ns.nuke("n00dles");
         ns.print("Successfully nuked n00dles.")
     }
+
+    ns.print('Now calculating javascript system latency. Please avoid viewing the "Active Scripts" tab...');
     ns.exec("zkillall.js", "zstopwatch", 1);
     let timeLimit = 30000 / (minimumtime * 3),
         stopwatchStart = ns.getTimeSinceLastAug();
@@ -77,7 +77,8 @@ export async function main(ns) {
         await ns.sleep(minimumtime);
         ns.exec("zkillall.js", host, 1, i);
     }
-    const unitime = (ns.getTimeSinceLastAug() - stopwatchStart) / (Math.ceil(timeLimit) * 3);
+    let stopwatchEnd = ns.getTimeSinceLastAug();
+    const unitime = (stopwatchEnd - stopwatchStart) / (Math.ceil(timeLimit) * 3);
     const jsLatency = unitime - minimumtime;
     ns.print(
         Math.round(jsLatency * 1000) / 1000,
@@ -186,10 +187,10 @@ export async function main(ns) {
             await ns.sleep(timeMinusLatency);
         }
         ns.print(
-            "Done. Script chain will start in ",
+            "Done. Script chain will start generating income in ",
             Math.round(wtime - timeBetweenInstances * instances2 * 3) / 1000,
-            " seconds and will finish in ",
-            Math.round(wtime) / 1000, " seconds."
+            " seconds to ",
+            Math.round(wtime) / 1000, " seconds from now."
         );
         await ns.sleep(wtime + unitime * 2);
 
