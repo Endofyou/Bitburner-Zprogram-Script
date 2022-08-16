@@ -189,8 +189,8 @@ export async function main(ns) {
         ns.print(
             "Done. Script chain will start generating income in ",
             Math.round(wtime - timeBetweenInstances * instances2 * 3) / 1000,
-            " seconds to ",
-            Math.round(wtime) / 1000, " seconds from now."
+            " seconds, ending in ",
+            Math.round(wtime) / 1000, " seconds."
         );
         await ns.sleep(wtime + unitime * 2);
 
