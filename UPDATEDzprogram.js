@@ -389,11 +389,11 @@ export async function main(ns) {
             }
         }
 
-        function IfStatement() {
+        function IfStatement(targetCandidate) {
             if (number == 0) {
                 return true;
             } else if (number == 1) {
-                return ns.getServerNumPortsRequired(serverarray[i]) <= TotalPortsExes();
+                return ns.getServerNumPortsRequired(targetCandidate) <= TotalPortsExes();
             }
         }
 
@@ -409,7 +409,7 @@ export async function main(ns) {
                 bestserver <= (percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) * bestinstances) /
                 (bestweakentime * (21 / 16)) &&
                 ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverarray[i]) &&
-                IfStatement()
+                IfStatement(serverarray[i])
             ) {
                 var bestserver = percent * besthackchance * ns.getServerMaxMoney(serverarray[i]) *
                     bestinstances / (bestweakentime * (21 / 16)),
