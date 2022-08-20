@@ -36,39 +36,25 @@ export async function main(ns) {
         zhack = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.hack(ns.args[0]); }`,
         zgrow = `export async function main(ns) { await ns.sleep(ns.args[1]); await ns.grow(ns.args[0]); }`,
         zweaken = `export async function main(ns) { await ns.weaken(ns.args[0]); }`,
-        zkillall = `export async function main(ns) { ns.killall("zstopwatch"); }`;
+        zkillall = `export async function main(ns) { ns.killall("foodnstuff"); }`;
     await ns.write("growonce.js", growonce, "w");
     await ns.write("weakenonce.js", weakenonce, "w");
     await ns.write("zhack.js", zhack, "w");
     await ns.write("zgrow.js", zgrow, "w");
     await ns.write("zweaken.js", zweaken, "w");
     await ns.write("zkillall.js", zkillall, "w");
-    await ns.scp(ScriptsList(), "home", host);
+    await ns.scp(ScriptsList(), host, "home");
     ns.print("Copy/pasted necessary files to host server.");
 
-    if (ns.serverExists("zstopwatch") == false) {
-        if (
-            ns.getPurchasedServerCost(8) <= ns.getServerMoneyAvailable("home") &&
-            ns.getPurchasedServers().length < 25
-        ) {
-            ns.purchaseServer("zstopwatch", 8);
-            await ns.scp(ScriptsList(), "home", "zstopwatch");
-            ns.print('Successfully purchased "zstopwatch" testing server.');
-        } else {
-            ns.print("ERROR: unable to purchase a testbenching server at 8 GB. Killing script...")
-            ns.exit();
-        }
+    if (ns.hasRootAccess("foodnstuff") == false) {
+        ns.nuke("foodnstuff");
     }
-    if (ns.hasRootAccess("n00dles") == false) {
-        ns.nuke("n00dles");
-        ns.print("Successfully nuked n00dles.")
-    }
-
+    await ns.scp(ScriptsList(), "foodnstuff", "home");
     ns.print('Now calculating javascript system latency. Please avoid viewing the "Active Scripts" tab...');
-    ns.exec("zkillall.js", "zstopwatch", 1);
+    ns.exec("zkillall.js", "foodnstuff", 1);
     let timeLimit = 30000 / (minimumtime * 3),
         stopwatchStart = ns.getTimeSinceLastAug();
-    for (let i = 0, host = "zstopwatch", target = "n00dles"; i < timeLimit; i++) {
+    for (let i = 0, host = "foodnstuff", target = "foodnstuff"; i < timeLimit; i++) {
         ns.exec("zhack.js", host, 1, target, 0, i);
         await ns.sleep(minimumtime);
         ns.exec("zgrow.js", host, 1, target, 0, i);
