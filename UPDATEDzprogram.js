@@ -8,7 +8,7 @@ export async function main(ns) {
     const maxscripts = 9000; //The maximum # of scripts that Zprogram is allowed to produce (lower this if game crashes)
 
     const maxinstances = Math.floor(maxscripts / 3);
-    const calcIncome1 = ns.getTimeSinceLastAug();
+    const calcIncome1 = Date.now();
 
     ns.clearLog();
     ns.disableLog("ALL");
@@ -53,7 +53,7 @@ export async function main(ns) {
     ns.print('Now calculating javascript system latency. Please avoid viewing the "Active Scripts" tab...');
     ns.exec("zkillall.js", "foodnstuff", 1);
     let timeLimit = 30000 / (minimumtime * 3),
-        stopwatchStart = ns.getTimeSinceLastAug();
+        stopwatchStart = Date.now();
     for (let i = 0, host = "foodnstuff", target = "foodnstuff"; i < timeLimit; i++) {
         ns.exec("zhack.js", host, 1, target, 0, i);
         await ns.sleep(minimumtime);
@@ -63,7 +63,7 @@ export async function main(ns) {
         await ns.sleep(minimumtime);
         ns.exec("zkillall.js", host, 1, i);
     }
-    let stopwatchEnd = ns.getTimeSinceLastAug();
+    let stopwatchEnd = Date.now();
     const unitime = (stopwatchEnd - stopwatchStart) / (Math.ceil(timeLimit) * 3);
     const jsLatency = unitime - minimumtime;
     ns.print(
@@ -105,7 +105,7 @@ export async function main(ns) {
     await PrepServer(0);
 
     ns.print("\nNow starting average income calculations.");
-    const calcIncome2 = ns.getTimeSinceLastAug();
+    const calcIncome2 = Date.now();
 
     while (true) {
 
@@ -181,7 +181,7 @@ export async function main(ns) {
         await ns.sleep(wtime + unitime * 2);
 
         ns.print("Cycle complete. Renewing script chain...\n\n");
-        let calcIncome3 = ns.getTimeSinceLastAug(),
+        let calcIncome3 = Date.now(),
             incomeMultiplier = (calcIncome3 - calcIncome1) / (calcIncome3 - calcIncome2);
         if (ns.args[0] == null && ns.args[1] == null) {
             var moneysec = ns.getScriptIncome(
