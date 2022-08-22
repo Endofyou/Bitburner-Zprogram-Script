@@ -64,7 +64,7 @@ export async function main(ns) {
         ns.exec("zkillall.js", host, 1, i);
     }
     let stopwatchEnd = Date.now();
-    const unitime = (stopwatchEnd - stopwatchStart) / (Math.ceil(timeLimit) * 3);
+    const unitime = (stopwatchEnd - stopwatchStart) / (timeLimit * 3);
     const jsLatency = unitime - minimumtime;
     ns.print(
         Math.round(jsLatency * 1000) / 1000,
